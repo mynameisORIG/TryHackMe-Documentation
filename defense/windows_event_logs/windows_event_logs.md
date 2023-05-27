@@ -175,5 +175,5 @@ Below is a table that displays the accepted key/value pairs for the Get-WinEvent
 
 Key name | LogName
 --- | --- |
-Value data type | `<String[]>`
+Value data type | `<String[]>` |
 Accepts wildcard characters? | Yes
