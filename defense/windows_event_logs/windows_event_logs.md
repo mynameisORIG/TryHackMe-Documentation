@@ -72,6 +72,26 @@ This section has two tabs: **General** and **Details**.
 
 The Create Custom View and Filter Current Log are nearly identical. The only difference between the 2 is that the By log and By source radio buttons are greyed out in Filter Current Log. What is the reason for that? The filter you can make with this specific action only relates to the current log. Hence no reason for *by log* or *by source* to be enabled.
 
+## task2 - questions and answers
+
+1. For the questions below, use Event Viewer to analyze Microsoft-Windows-PowerShell/Operational log.
+2. What is the Event ID for the first recorded event?
+
+Filter the date and time and then search for the Event ID. The answer is **40961**
+
+3. Filter on Event ID 4104. What was the 2nd command executed in the PowerShell session? 
+
+whoami
+
+4. What is the Task Category for Event ID 4104?
+
+Execute a Remote Command
+
+5. Analyze the Windows PowerShell log. What is the Task Category for Event ID 800?
+
+Pipeline Execution Details
+
+
 ## task3 - wevtuil.exe
 The wevtutil.exe tool "enables you to retrieve information about event logs and publishers. You can also use this command to install and uninstall event manifests, to run queries, and to export, archive, and clear logs."
 
@@ -93,6 +113,45 @@ epl | export-log             Export a log.
 al  | archive-log            Archive an exported log.
 cl  | clear-log              Clear a log.
 ```
+
+## task 3 questions and answers
+
+1. How many log names are in the machine?
+
+(The `Measure-Object` calculates the numeric properties of objects, and the characters, words, and lines in string objects, such as files of text.) [https://learn.microsoft.com/en-us/powershell/module/microsoft.powershell.utility/measure-object?view=powershell-7.3]
+
+```
+wevtutil.exe el| Measure-Object
+Count    : 1071 
+```
+
+2. What event files would be read when using the **query-events** command?
+
+```wevtuil.exe qe /?
+event log, log files, structured query
+```
+
+3. What option would you use to provide a path to a log file?
+
+/lf:true
+
+4. What is the **VALUE** for **/q**?
+
+XPATH query
+
+5. The questions below are based on this command: **wevtutil qe Application /c:3 /rd:true /f:text**
+
+6. What is the log name?
+
+Application
+
+7. What is the **/rd** option for?
+
+Event read direction
+
+8. What is the **/c** option for?
+
+Maximum number of events to read. 
 
 ## task 4 - Get-WinEvent
 Get-WinEvent cmdlet "gets events from event logs and event tracing log files on local and remote computers." It provides information on event logs and event log providers. Additionally, you can combine numerous events from multiple sources into a single command and filter using XPath queries, structured XML queries, and hash table queries.
@@ -173,7 +232,49 @@ Guidelines for defining a hash table are:
 
 Below is a table that displays the accepted key/value pairs for the Get-WinEvent FilterHashtable parameter.
 
-Key name | LogName
---- | --- |
-Value data type | `<String[]>` |
-Accepts wildcard characters? | Yes
+Key name | Value data type | Accepts wildcard characters? |
+LogName | `<String[]>` | yes |
+ProviderName | `<String[]>` | Yes |
+Path | `<String[]>` | No |
+Keywords | `<Long[]` | No |
+ID | `<Int32[]>` | No |
+Level | `<Int32[]>` | No |
+StarTime | `<DateTime>` | No |
+EndTime | `<DateTime>` | No |
+UserID | `<SID>` | No |
+Data | `<String[]>` | No |
+`<named-data>` | `<String[]>` | No |
+
+When building a query with a hash table, Microsoft recommends making the hash table one key-value pair at a time. Event Viewer can provide quick information on what you need to build your hash table.
+
+## task 4 questions and answers
+
+1. Answer the following questions using the (online)[https://docs.microsoft.com/en-us/powershell/module/microsoft.powershell.diagnostics/Get-WinEvent?view=powershell-7.1] help documentation for **Get-WinEvent**
+
+2. Execute the command from **Example 1** (as is). What are the names of the logs related to **OpenSSH**?
+
+`Get-WinEvent -ListLog *`
+OpenSSH/Admin, OpenSSH/Operational
+
+3. Execute the command from **Example 8**. Instead of the string **Policy** search for **PowerShell**. What is the name of the 3rd log provider? 
+
+`Get-WinEvent -ListProvider *Powershell*`
+ Microsoft-Windows-PowerShell-DesiredStateConfiguration-FileDownloadManager
+
+4. Execute the command from **Example 9**. Use **Microsoft-Windows-PowerShell** as the log provider. How many event ids are displayed for this event provider?
+
+```
+(Get-WinEvent -ListProvider Microsoft-Windows-Powershell).Events | Format-Table id, Description | Measure-Object
+Count    : 192
+```
+
+5. How do you specify the number of events to display
+
+`MaxEvents`
+
+6. When using the **FilterHashtable** parameter and filtering by level, what is the value for **Informational**?
+
+4
+
+## task 5 - XPATH Queries
+
