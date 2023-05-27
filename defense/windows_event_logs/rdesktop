@@ -1,0 +1,3 @@
+#!/bin/bash
+
+rdesktop $1 -u administrator -p blueT3aming!
